@@ -1,59 +1,106 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<div align="center">
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# SᴍᴀʀᴛSᴛᴏᴄᴋ AI 🚀
+### Next-Gen Inventory Management System with Advanced Analytics & Security
 
-## About Laravel
+<img src="screenshots/login.png" width="800" alt="SmartStock AI Login">
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**SᴍᴀʀᴛSᴛᴏᴄᴋ AI** is a professional-grade warehouse and inventory management solution built for speed, security, and scalability. Featuring a sleek glassmorphism UI, role-based access control, and automated reporting systems.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+[ [Demo Live (Coming Soon)](#) ]
 
-## Learning Laravel
+</div>
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 💎 Features Highlight
 
-## Laravel Sponsors
+* **Futuristic Dashboard**: Real-time analytics with interactive charts (Monthly/Weekly data).
+* **Role-Based Access Control (RBAC)**: Distinct permissions for Superadmin, Admin, and Staff.
+* **Automated Reporting**: Export professionally branded PDF & Excel reports.
+* **Approval System**: Secure transaction flow requiring Admin/Superadmin verification.
+* **Smart Inventory**: Full CRUD with categorized tracking and restock indicators.
+* **Demo Mode Protection**: Secure trial environment with "Read-Only" middleware for portfolio visitors.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## 🛠️ Tech Stack
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+| Technology | Purpose |
+| :--- | :--- |
+| **Laravel 11** | Robust Backend Framework & API Management |
+| **React.js** | Interactive Frontend Library |
+| **Inertia.js** | Single Page Application (SPA) Bridge |
+| **Tailwind CSS** | Styling & Glassmorphism Design System |
+| **MySQL** | Reliable Relational Database |
+| **Vite** | Lightning-fast Frontend Build Tool |
+| **SweetAlert2** | Interactive User Notifications & Alerts |
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 🛡️ Portfolio Demo Mode
 
-## Code of Conduct
+To ensure system integrity while allowing recruiters to explore, this project includes a **Restricted Demo Mode**:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+* **Demo Account**: `superadmin@demo.com` / `password123`
+* **Protection**: Attempts to modify data (Create/Update/Delete) via the demo account are intercepted by a custom `PreventDemoModify` middleware.
+* **Feedback**: Users receive a professional SweetAlert2 notification explaining the restriction.
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 📸 Screenshots Gallery
 
-## License
+### 🖥️ Secure Login Interface
+*Futuristic login with glassmorphism effects and scan animation.*
+<img src="screenshots/login.png" width="900" alt="Login Page">
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 📊 Real-time Dashboard (System Intelligence)
+*Overview of stock levels, recent transactions, and neural stock analysis.*
+<img src="screenshots/dashboard.png" width="900" alt="Dashboard Page">
+
+### 📦 Warehouse & Inventory Control
+*Centralized management for digital assets with real-time stock monitoring.*
+<img src="screenshots/inventory.png" width="900" alt="Inventory Page">
+
+### ⚡ Movement Control & Approvals
+*Logistics command center for asset movement and multi-level approval system.*
+<img src="screenshots/transactions.png" width="445" alt="Transactions"> <img src="screenshots/approvals.png" width="445" alt="Approvals">
+
+### 🛡️ Secure Demo Experience
+*Custom middleware protection for portfolio trial accounts.*
+<img src="screenshots/demo-restricted.png" width="600" alt="Demo Restricted Alert">
+
+---
+
+## 🚀 Installation
+
+Follow these steps to set up the project locally:
+
+1.  **Clone the Repository**
+    ```bash
+    git clone [https://github.com/yourusername/smartstock-ai.git](https://github.com/yourusername/smartstock-ai.git)
+    cd smartstock-ai
+    ```
+
+2.  **Backend Setup**
+    ```bash
+    composer install
+    cp .env.example .env
+    php artisan key:generate
+    ```
+
+3.  **Database Configuration**
+    Set up your `.env` database details, then run:
+    ```bash
+    php artisan migrate --seed
+    ```
+
+4.  **Frontend Setup**
+    ```bash
+    npm install
+    npm run dev
+    ```
+
+---
