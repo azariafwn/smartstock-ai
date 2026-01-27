@@ -4,11 +4,6 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite'; // <-- Pastikan baris ini ADA
 
 export default defineConfig({
-    server: {
-        watch: {
-            usePolling: true, // Paksa Vite mengecek perubahan secara berkala
-        },
-    },
     plugins: [
         tailwindcss(), // Sekarang ini sudah terdefinisi
         laravel({
@@ -17,4 +12,9 @@ export default defineConfig({
         }),
         react(),
     ],
+    server: {
+        watch: {
+            usePolling: true, // Paksa Vite mengecek perubahan secara berkala
+        },
+    },    
 });
