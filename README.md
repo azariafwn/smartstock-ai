@@ -26,17 +26,39 @@
 
 ---
 
-## 🛠️ Tech Stack
+## 🔐 Access Control Matrix (RBAC)
 
-| Technology | Purpose |
-| :--- | :--- |
-| **Laravel 11** | Robust Backend Framework & API Management |
-| **React.js** | Interactive Frontend Library |
-| **Inertia.js** | Single Page Application (SPA) Bridge |
-| **Tailwind CSS** | Styling & Glassmorphism Design System |
-| **MySQL** | Reliable Relational Database |
-| **Vite** | Lightning-fast Frontend Build Tool |
-| **SweetAlert2** | Interactive User Notifications & Alerts |
+The system implements a strict Role-Based Access Control to ensure data integrity and operational security.
+
+| Feature | Superadmin | Admin | Staff |
+| :--- | :---: | :---: | :---: |
+| **User Management** (Add/Edit/Delete User) | ✅ | ❌ | ❌ |
+| **System Reports** (Financial & Analytical) | ✅ | ❌ | ❌ |
+| **Transaction Approvals** | ✅ | ✅ | ❌ |
+| **Inventory Management** (Add/Edit Stock) | ✅ | ✅ | ⚠️ (Read Only) |
+| **Create Transactions** | ✅ | ✅ | ✅ |
+| **View Dashboard** | ✅ | ✅ | ✅ |
+
+### Roles Definition:
+* **Superadmin**: The "Command Center" user. Has full authority over the system, including managing users and high-level financial reports.
+* **Admin**: The "Operations Manager". Focused on inventory flow and approving staff transactions but cannot touch user management.
+* **Staff**: The "Ground Operator". Limited to creating transaction requests and monitoring stock levels without the ability to modify core data or approve requests.
+
+---
+
+## 🛠️ Detailed Tech Stack
+
+| Category | Technology | Purpose |
+| :--- | :--- | :--- |
+| **Backend Core** | **Laravel 11** | Leveraging the latest PHP framework for robust API routing, middleware security, and server-side logic. |
+| **Frontend Library** | **React.js** | Building a reactive and component-based user interface for a modern web experience. |
+| **Architecture** | **Inertia.js** | Serving as the "Modern Monolith" bridge to build Single Page Applications (SPA) without the complexity of a separate API. |
+| **Styling** | **Tailwind CSS** | Implementing a high-fidelity glassmorphism design system and responsive utility-first layouts. |
+| **Database** | **MySQL** | Managing relational data with complex relationships for inventory, users, and transaction logging. |
+| **Build Tool** | **Vite** | Orchestrating lightning-fast Hot Module Replacement (HMR) and optimized production bundling. |
+| **UI Components** | **Lucide React** | Providing consistent, high-quality icons for a futuristic and clean navigation system. |
+| **Notifications** | **SweetAlert2** | Delivering professional, themed modal alerts and toast notifications for user feedback. |
+| **Export Engines** | **Maatwebsite Excel** | Handling complex data transformations for professional PDF and XLSX report generation. |
 
 ---
 
@@ -66,7 +88,7 @@ To ensure system integrity while allowing recruiters to explore, this project in
 
 ### ⚡ Movement Control & Approvals
 *Logistics command center for asset movement and multi-level approval system.*
-<img src="screenshots/transactions.png" width="445" alt="Transactions"> <img src="screenshots/approvals.png" width="445" alt="Approvals">
+<img src="screenshots/transactions.png" width="900" alt="Transactions"> <img src="screenshots/approvals.png" width="900" alt="Approvals">
 
 ### 🛡️ Secure Demo Experience
 *Custom middleware protection for portfolio trial accounts.*
