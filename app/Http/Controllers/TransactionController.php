@@ -27,7 +27,7 @@ class TransactionController extends Controller
         $request->validate([
             'product_id' => 'required|exists:products,id',
             'type' => 'required|in:IN,OUT',
-            'category' => 'required|in:sale,distributed,damaged,lost',
+            'category' => 'required|in:sale,distributed,damaged,lost,restock',
             'quantity' => 'required|integer|min:1',
         ]);
 
@@ -123,5 +123,31 @@ class TransactionController extends Controller
             'reports' => $query->latest()->get(),
             'filters' => $request->only(['start_date', 'end_date', 'category'])
         ]);
+    }
+
+    public function export(Request $request) 
+    {
+        $query = Transaction::with(['product', 'user']);
+        
+        // Filter Berdasarkan Type (IN/OUT)
+        if ($request->type && $request->type !== 'all') {
+            $query->where('type', $request->type);
+        }
+        
+        // PENTING: Harus pakai ->get() untuk merubah query menjadi Collection
+        $transactions = $query->latest()->get(); 
+
+        if ($request->format === 'excel') {
+            // Gunakan Full Namespace jika belum di-import di atas
+            return \Maatwebsite\Excel\Facades\Excel::download(
+                new \App\Exports\TransactionsExport($transactions), 
+                'Logistics_Report_' . now()->format('Ymd') . '.xlsx'
+            );
+        }
+        
+        if ($request->format === 'pdf') {
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.transactions', compact('transactions'));
+            return $pdf->download('Logistics_Report_' . now()->format('Ymd') . '.pdf');
+        }
     }
 }
