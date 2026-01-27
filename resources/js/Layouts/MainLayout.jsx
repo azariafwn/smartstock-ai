@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, router, usePage } from '@inertiajs/react'; // Tambahkan usePage
+import Swal from 'sweetalert2';
 import { 
     LayoutDashboard, Box, ArrowLeftRight, CheckCircle, 
     FileText, LogOut, Menu, Moon, Sun, User, UserPlus 
@@ -9,6 +10,8 @@ export default function MainLayout({ children }) {
     // Ambil data auth dari props global Inertia
     const { auth } = usePage().props;
     const userRole = auth.user.role; // Asumsi kolom di DB namanya 'role'
+
+    const { flash } = usePage().props;
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isDark, setIsDark] = useState(
@@ -28,6 +31,39 @@ export default function MainLayout({ children }) {
             localStorage.setItem('theme', 'light');
         }
     }, [isDark]);
+
+    useEffect(() => {
+        if (flash?.error) {
+            Swal.fire({
+                title: 'ACTION RESTRICTED',
+                text: flash.error,
+                icon: 'warning',
+                background: isDark ? '#0f172a' : '#ffffff', // Menyesuaikan theme
+                color: isDark ? '#fff' : '#000',
+                confirmButtonColor: '#2563eb',
+                iconColor: '#f59e0b',
+                customClass: {
+                    popup: 'rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-2xl',
+                    title: 'font-black tracking-tighter',
+                    confirmButton: 'rounded-xl px-6 py-3 font-bold uppercase tracking-widest text-xs'
+                }
+            });
+        }
+
+        if (flash?.success) {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: flash.success,
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                background: isDark ? '#0f172a' : '#ffffff',
+                color: isDark ? '#fff' : '#000',
+            });
+        }
+    }, [flash, isDark]); // Re-run kalau ada flash baru atau ganti theme
 
     // Tambahkan properti 'roles' pada navItems untuk filter akses
     const navItems = [

@@ -16,5 +16,9 @@ export default defineConfig({
         watch: {
             usePolling: true, // Paksa Vite mengecek perubahan secara berkala
         },
+        host: '0.0.0.0', // Ini supaya HP bisa akses file JS
+        hmr: {
+            host: 'localhost',
+        },
     },    
 });

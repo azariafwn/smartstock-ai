@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { router, usePage, Head } from '@inertiajs/react';
-import { Box, Lock, Mail, ArrowRight, ShieldCheck, Cpu } from 'lucide-react';
+import { Box, Lock, Mail, ArrowRight, ShieldCheck, Cpu, Fingerprint } from 'lucide-react';
 
 export default function Login() {
     const { errors } = usePage().props;
@@ -17,6 +17,15 @@ export default function Login() {
             [key]: value,
         }));
     }
+
+    const handleDemoLogin = (role) => {
+        // Logika auto-fill
+        const credentials = {
+            'superadmin': { email: 'superadmin@demo.com', password: 'password123' },
+        };
+        
+        router.post('/login', credentials[role]);
+    };
 
     function handleSubmit(e) {
         e.preventDefault();
@@ -35,7 +44,7 @@ export default function Login() {
                 
                 {/* Grid Pattern Overlay */}
                 <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
-                     style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
+                    style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
                 
                 {/* Animated Lines/Particles */}
                 <div className="absolute top-1/4 left-1/4 w-1 h-20 bg-gradient-to-b from-transparent via-blue-500 to-transparent opacity-20 animate-bounce" style={{ animationDuration: '4s' }}></div>
@@ -112,6 +121,22 @@ export default function Login() {
                             <div className="absolute inset-0 w-1/4 h-full bg-white/20 skew-x-[-20deg] translate-x-[-150%] group-hover:translate-x-[400%] transition-transform duration-700"></div>
                             Authorize Access <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                         </button>
+
+                        <div className="mt-8 pt-6 border-t border-white/5">
+                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest text-center mb-4">
+                                Trial Environment
+                            </p>
+                            <div className="grid grid-cols-1 gap-3">
+                                <button 
+                                    type="button"
+                                    onClick={() => handleDemoLogin('superadmin')}
+                                    className="w-full py-3 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 rounded-xl text-blue-400 text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+                                >
+                                    <Fingerprint size={14} /> Log as Demo Superadmin
+                                </button>
+                            </div>
+                        </div>
+                        
                     </form>
                 </div>
 

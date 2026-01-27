@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleCheck::class,
+            'prevent.demo' => \App\Http\Middleware\PreventDemoModify::class,
         ]);
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,

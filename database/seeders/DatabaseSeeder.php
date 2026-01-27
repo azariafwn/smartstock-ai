@@ -26,6 +26,12 @@ class DatabaseSeeder extends Seeder
         $staff = User::updateOrCreate(['email' => 'staff@smartstock.com'], [
             'name' => 'Warehouse Staff', 'password' => Hash::make('password123'), 'role' => 'staff'
         ]);
+        \App\Models\User::create([
+            'name' => 'Demo Superadmin',
+            'email' => 'superadmin@demo.com',
+            'password' => Hash::make('password123'),
+            'role' => 'superadmin',
+        ]);
 
         // 2. Setup Categories & Products
         $categories = [
