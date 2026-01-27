@@ -118,6 +118,11 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+
+        if ($request->user()->role === 'staff') {
+            abort(403, 'Staff is not allowed to create products.');
+        }
+
         // Validasi input sesuai dengan struktur migrasi kamu
         $validated = $request->validate([
             'name'          => 'required|string|max:255',
@@ -136,6 +141,11 @@ class ProductController extends Controller
 
     public function update(Request $request, $id)
     {
+        // Proteksi Backend
+        if ($request->user()->role === 'staff') {
+            abort(403, 'Staff is not allowed to update products.');
+        }
+        
         $product = \App\Models\Product::findOrFail($id);
         
         $validated = $request->validate([
@@ -152,8 +162,14 @@ class ProductController extends Controller
         return redirect()->back()->with('success', 'Product updated successfully!');
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+
+        // Proteksi Backend
+        if ($request->user()->role === 'staff') {
+            abort(403, 'Staff is not allowed to delete products.');
+        }
+
         $product = \App\Models\Product::findOrFail($id);
         $product->delete();
 
