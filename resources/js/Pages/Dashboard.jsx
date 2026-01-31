@@ -3,6 +3,7 @@ import MainLayout from '../Layouts/MainLayout.jsx';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts'; 
 import { Head } from '@inertiajs/react';
 import { Package, AlertTriangle, Clock, TrendingDown, Sparkles, Box, BrainCircuit, Zap, ChevronRight } from 'lucide-react';
+import { Link } from '@inertiajs/react';
 
 export default function Dashboard({ summary, recentLogs, chartData }) {
     return (
@@ -138,9 +139,12 @@ export default function Dashboard({ summary, recentLogs, chartData }) {
                             </div>
                         ))}
                     </div>
-                    <button className="w-full mt-6 py-4 bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-black text-xs xl:text-[10px] uppercase tracking-widest rounded-xl hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center gap-2">
+                    <Link 
+                        href="/reports" 
+                        className="w-full mt-6 py-4 bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-black text-xs xl:text-[10px] uppercase tracking-widest rounded-xl hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center gap-2"
+                    >
                         View All <ChevronRight size={14} />
-                    </button>
+                    </Link>
                 </div>
             </div>
             
