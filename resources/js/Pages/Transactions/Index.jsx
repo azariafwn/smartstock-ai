@@ -45,10 +45,11 @@ export default function Transactions({ products, transactions }) {
             <header className="mb-6 md:mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-2 mb-2">
-                        <div className="h-1 w-8 bg-blue-600 rounded-full"></div>
+                        <div className="h-1 w-6 md:w-8 bg-blue-600 rounded-full"></div>
                         <span className="text-[10px] md:text-xs font-bold text-blue-600 uppercase tracking-[0.3em]">Logistics Command</span>
                     </div>
                     <h1 className="text-2xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">Movement Control</h1>
+                    <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-medium">Execute and monitor asset transfers.</p>
                 </div>
 
                 <div className="flex bg-white dark:bg-slate-900 p-1 md:p-1.5 rounded-xl md:rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm self-start md:self-auto">

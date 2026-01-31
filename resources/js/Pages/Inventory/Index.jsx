@@ -81,10 +81,11 @@ export default function Inventory({ products, categories = [] }) {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mb-8">
                 <div>
                     <div className="flex items-center gap-2 mb-2">
-                        <div className="h-1 w-8 bg-blue-600 rounded-full"></div>
+                        <div className="h-1 w-6 md:w-8 bg-blue-600 rounded-full"></div>
                         <span className="text-[10px] md:text-xs font-bold text-blue-600 uppercase tracking-[0.3em]">Quantum Repository</span>
                     </div>
-                    <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">Warehouse</h1>
+                    <h1 className="text-2xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">Warehouse</h1>
+                    <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-medium">Manage and monitor your digital assets.</p>
                 </div>
                 
                 <div className="flex items-center gap-2 md:gap-3">

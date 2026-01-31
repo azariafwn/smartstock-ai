@@ -28,6 +28,7 @@ export default function Approvals({ approvals }) {
                 <div className="flex justify-between items-end">
                     <div>
                         <h1 className="text-2xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">Pending Approvals</h1>
+                        <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-medium">Verify system-wide asset movements.</p>
                     </div>
                     <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-500/10 rounded-2xl text-blue-600 border border-blue-100 dark:border-blue-500/20">
                         <ShieldCheck size={18} />

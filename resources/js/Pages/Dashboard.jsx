@@ -12,11 +12,12 @@ export default function Dashboard({ summary, recentLogs, chartData }) {
             {/* Header: Font size fixed for mobile, compact for laptop */}
             <header className="mb-4 md:mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <div className="flex items-center gap-2 mb-1">
-                        <div className="h-1 w-6 bg-blue-600 rounded-full"></div>
-                        <span className="text-xs xl:text-[10px] font-bold text-blue-600 uppercase tracking-[0.3em]">Neural Interface</span>
+                    <div className="flex items-center gap-2 mb-2">
+                        <div className="h-1 w-6 md:w-8 bg-blue-600 rounded-full"></div>
+                        <span className="text-[10px] md:text-xs font-bold text-blue-600 uppercase tracking-[0.3em]">Neural Interface</span>
                     </div>
-                    <h1 className="text-3xl xl:text-4xl font-black text-slate-900 dark:text-white tracking-tight">System Intelligence</h1>
+                    <h1 className="text-2xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">System Intelligence</h1>
+                    <p className="text-xs md:text-sm text-slate-400 font-medium">Real-time neural analytics engine.</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 rounded-xl border border-emerald-100 dark:border-emerald-500/20 text-xs xl:text-[10px] font-bold uppercase tracking-widest">
