@@ -14,10 +14,11 @@ class ProductController extends Controller
 {
     public function dashboard(Request $request)
     {
+        // 1. Inisialisasi Produk Terpilih
         $selectedProductId = $request->input('product_id', Product::first()?->id);
         $product = Product::findOrFail($selectedProductId);
         
-        // Summary Cards
+        // 2. Summary Cards
         $summary = [
             'total_stock' => Product::sum('stock'),
             'low_stock' => Product::whereColumn('stock', '<=', 'min_threshold')->count(),
@@ -27,7 +28,7 @@ class ProductController extends Controller
                 ->sum('quantity') ?? 0,
         ];
 
-        // 1. Ambil History Transaksi (30 hari terakhir)
+        // 3. Ambil History Transaksi (30 hari terakhir) untuk Chart
         $transactions = Transaction::where('product_id', $selectedProductId)
             ->where('status', 'approved')
             ->where('created_at', '>=', Carbon::now()->subDays(30))
@@ -35,27 +36,23 @@ class ProductController extends Controller
             ->get();
 
         $chartData = [];
-        $currentRunningStock = $product->stock; // Mulai dari stok fisik saat ini
+        $currentRunningStock = $product->stock; // Mulai dari stok saat ini
 
-        // Iterasi mundur untuk menghitung saldo stok harian
+        // Iterasi mundur untuk menghitung saldo stok harian (Actual Data)
         for ($i = 0; $i <= 30; $i++) {
             $date = Carbon::now()->subDays($i)->format('Y-m-d');
             
-            // Cari transaksi pada tanggal tersebut
             $dayTransactions = $transactions->filter(function($t) use ($date) {
                 return $t->created_at->format('Y-m-d') === $date;
             });
 
-            // Simpan saldo hari ini ke chart
             $chartData[] = [
                 'date' => Carbon::parse($date)->format('d/m'),
                 'actual' => $currentRunningStock,
                 'prediction' => null,
             ];
 
-            // Hitung saldo untuk hari SEBELUMNYA (Inverse calculation)
-            // Jika hari ini ada barang IN, maka kemarin stok lebih sedikit.
-            // Jika hari ini ada barang OUT, maka kemarin stok lebih banyak.
+            // Inverse calculation untuk melihat stok di hari sebelumnya
             foreach ($dayTransactions as $t) {
                 if ($t->type === 'IN') {
                     $currentRunningStock -= $t->quantity;
@@ -65,20 +62,41 @@ class ProductController extends Controller
             }
         }
 
-        // Balik urutan agar dari tanggal lama ke baru
         $chartData = array_reverse($chartData);
 
-        // 2. Tambahkan Data Forecast
-        $forecast = StockForecast::where('product_id', $selectedProductId)
-            ->orderBy('forecast_date', 'asc')
-            ->get();
+        // 4. INTEGRASI AI VIA VENV
+        $aiBriefing = "Neural link established. analyzing patterns...";
+        
+        try {
+            // Sesuaikan path ke venv dan script python
+            $pythonPath = base_path('venv\Scripts\python.exe');
+            $scriptPath = base_path('python_ai\predict_engine.py');
+            
+            // Eksekusi command: "path/to/venv/python.exe" "path/to/script.py" product_id
+            $command = "\"$pythonPath\" \"$scriptPath\" $selectedProductId 2>&1";
+            $output = shell_exec($command);
+            
+            $aiData = json_decode($output, true);
 
-        foreach ($forecast as $f) {
-            $chartData[] = [
-                'date' => Carbon::parse($f->forecast_date)->format('d/m'),
-                'actual' => null,
-                'prediction' => (int)$f->predicted_quantity,
-            ];
+            if ($aiData && !isset($aiData['error'])) {
+                $aiBriefing = $aiData['message'];
+                
+                // Jika ada data burn rate, kita bisa tambahkan 1 titik prediksi ke chart
+                // Di dalam ProductController.php
+                if (isset($aiData['days_left']) && $aiData['days_left'] > 0) {
+                    $forecastDate = Carbon::now()->addDays($aiData['days_left'])->format('d/m');
+                    $chartData[] = [
+                        'date' => $forecastDate, // Menggunakan tanggal asli, bukan tulisan "Forecast"
+                        'actual' => null,
+                        'prediction' => $product->min_threshold, 
+                    ];
+                }
+            } elseif (isset($aiData['error'])) {
+                $aiBriefing = "AI Note: " . $aiData['error'];
+            }
+        } catch (\Exception $e) {
+            Log::error("AI Dashboard Error: " . $e->getMessage());
+            $aiBriefing = "AI Engine is currently optimizing data.";
         }
 
         return Inertia::render('Dashboard', [
@@ -86,7 +104,8 @@ class ProductController extends Controller
             'recentLogs' => Transaction::with('product')->where('status', 'approved')->latest()->take(5)->get(),
             'chartData' => $chartData,
             'products' => Product::all(['id', 'name']),
-            'selectedProductId' => (int)$selectedProductId
+            'selectedProductId' => (int)$selectedProductId,
+            'aiBriefing' => $aiBriefing
         ]);
     }
 
