@@ -7,7 +7,9 @@
 
 ---
 
-**SᴍᴀʀᴛSᴛᴏᴄᴋ AI** is a professional-grade warehouse and inventory management solution built for speed, security, and scalability. Featuring a sleek glassmorphism UI, role-based access control, and automated reporting systems.
+**SᴍᴀʀᴛSᴛᴏᴄᴋ AI** is a professional-grade warehouse and inventory management solution that bridges the gap between traditional logistics and modern data science.
+
+Built for speed, security, and scalability, it features a sophisticated Machine Learning engine to predict stock depletion and restock cycles. With a sleek glassmorphism UI, strict Role-Based Access Control (RBAC), and real-time neural analytics, it empowers businesses to move from reactive tracking to proactive inventory optimization.
 
 [ [Demo Live: https://smartstock-ai.my.id](https://smartstock-ai.my.id) ]
 
