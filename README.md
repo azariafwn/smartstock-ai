@@ -23,6 +23,18 @@
 * **Approval System**: Secure transaction flow requiring Admin/Superadmin verification.
 * **Smart Inventory**: Full CRUD with categorized tracking and restock indicators.
 * **Demo Mode Protection**: Secure trial environment with "Read-Only" middleware for portfolio visitors.
+* **Neural Stock Forecasting**: Integrated Python Machine Learning engine using Exponential Smoothing to predict restock dates based on real-time burn rates.
+* **Intelligent Insights**: Dynamic AI-generated briefings that analyze demand trends (increment/decrement percentages) and provide adaptive urgency alerts.
+
+---
+
+## 🧠 AI Integration Architecture
+
+The system uses a **Modern Hybrid Architecture**:
+1. **Laravel** serves as the core orchestrator and data gatekeeper.
+2. **Python Venv** acts as the isolated analytical brain.
+3. Data is synchronized via **direct PostgreSQL connection** for high-performance processing.
+4. Insights are delivered back to the **React frontend** using Inertia.js for a seamless SPA experience.
 
 ---
 
@@ -54,11 +66,14 @@ The system implements a strict Role-Based Access Control to ensure data integrit
 | **Frontend Library** | **React.js** | Building a reactive and component-based user interface for a modern web experience. |
 | **Architecture** | **Inertia.js** | Serving as the "Modern Monolith" bridge to build Single Page Applications (SPA) without the complexity of a separate API. |
 | **Styling** | **Tailwind CSS** | Implementing a high-fidelity glassmorphism design system and responsive utility-first layouts. |
-| **Database** | **MySQL** | Managing relational data with complex relationships for inventory, users, and transaction logging. |
+| **Database** | **PostgreSQL** | Managing relational data with robust performance for concurrent analytical queries. |
+| **AI Engine** | **Python 3.12+** | Processing complex statistical models and time-series forecasting outside the PHP runtime. |
+| **Machine Learning** | **Statsmodels & Pandas** | Implementing Simple Exponential Smoothing (SES) for reliable inventory projection. |
 | **Build Tool** | **Vite** | Orchestrating lightning-fast Hot Module Replacement (HMR) and optimized production bundling. |
 | **UI Components** | **Lucide React** | Providing consistent, high-quality icons for a futuristic and clean navigation system. |
 | **Notifications** | **SweetAlert2** | Delivering professional, themed modal alerts and toast notifications for user feedback. |
 | **Export Engines** | **Maatwebsite Excel** | Handling complex data transformations for professional PDF and XLSX report generation. |
+
 
 ---
 
@@ -123,6 +138,17 @@ Follow these steps to set up the project locally:
     ```bash
     npm install
     npm run dev
+    ```
+
+5. **AI Engine Setup**
+    ```bash
+    python -m venv venv
+    # Windows:
+    ai_venv\Scripts\activate
+    # Linux/Mac:
+    source ai_venv/bin/activate
+
+    pip install pandas statsmodels sqlalchemy psycopg2-binary mysql-connector-python
     ```
 
 ---
