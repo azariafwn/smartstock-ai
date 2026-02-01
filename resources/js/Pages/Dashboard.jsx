@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; // Tambahkan useState
+import React, { useState } from 'react';
 import MainLayout from '../Layouts/MainLayout.jsx';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts'; 
 import { Head, router } from '@inertiajs/react';
@@ -8,21 +8,15 @@ import { Link } from '@inertiajs/react';
 export default function Dashboard({ auth, summary, recentLogs, chartData, products, selectedProductId, aiBriefing }) {
     const [isSyncing, setIsSyncing] = useState(false);
 
-    // Fungsi untuk trigger re-sync data AI dengan Notifikasi
     const handleResync = () => {
         setIsSyncing(true);
         router.reload({ 
             only: ['aiBriefing', 'chartData'],
-            onSuccess: () => {
-                setIsSyncing(false);
-                // Notifikasi sederhana menggunakan alert browser atau Anda bisa ganti dengan library toast
-                console.log("Neural link synchronized.");
-            },
+            onSuccess: () => setIsSyncing(false),
             onFinish: () => setIsSyncing(false)
         });
     };
 
-    // Fungsi untuk ganti produk yang dianalisis
     const handleProductChange = (e) => {
         router.get('/dashboard', { product_id: e.target.value }, { 
             preserveState: true,
@@ -30,9 +24,32 @@ export default function Dashboard({ auth, summary, recentLogs, chartData, produc
         });
     };
 
-    // Custom Tick untuk membedakan warna tanggal Forecast di sumbu X
-    const CustomXAxisTick = ({ x, y, payload, index }) => {
-        const isTarget = index === chartData.length - 1;
+    const formatAiBriefing = (text) => {
+        if (!text) return text;
+        const daysMatch = text.match(/(\d+)\s+days\s+left/i);
+        const daysLeft = daysMatch ? parseInt(daysMatch[1]) : null;
+        let dayColor = "text-emerald-500"; 
+        if (daysLeft !== null) {
+            if (daysLeft <= 3) dayColor = "text-rose-500 font-black animate-pulse"; 
+            else if (daysLeft <= 7) dayColor = "text-amber-500 font-bold"; 
+        }
+        return text.split(/(\d+%|increased|decreased|CRITICAL|threshold on \d+ \w+|\d+ days left)/g).map((part, i) => {
+            if (/increased/i.test(part)) return <span key={i} className="text-emerald-500 font-bold">{part}</span>;
+            if (/decreased/i.test(part)) return <span key={i} className="text-rose-500 font-bold">{part}</span>;
+            if (/CRITICAL/i.test(part)) return <span key={i} className="text-rose-600 font-black underline">{part}</span>;
+            if (/\d+%/g.test(part)) return <span key={i} className="text-blue-500 font-bold">{part}</span>;
+            if (/threshold on \d+ \w+/i.test(part)) return <span key={i} className="text-purple-500 font-bold">{part}</span>;
+            if (/\d+ days left/i.test(part)) return <span key={i} className={`${dayColor}`}>{part}</span>;
+            return part;
+        });
+    };
+
+    // --- FIX: PEWARNAAN SUMBU X YANG LEBIH AKURAT ---
+    const CustomXAxisTick = ({ x, y, payload }) => {
+        // Cek apakah ini adalah label tanggal prediksi (mengandung 'Forecast' atau format tanggal tertentu dari controller)
+        // Jika di controller Anda mengubahnya menjadi tanggal, sesuaikan pengecekan ini
+        const isForecast = payload.value.includes('/'); // Asumsi tanggal aktual pakai format d/m
+        const isTarget = payload.index === chartData.length - 1; // Menandai titik terakhir sebagai target AI
 
         return (
             <g transform={`translate(${x},${y})`}>
@@ -41,7 +58,7 @@ export default function Dashboard({ auth, summary, recentLogs, chartData, produc
                     y={0}
                     dy={16}
                     textAnchor="middle"
-                    fill={isTarget ? "#8b5cf6" : "#94a3b8"}
+                    fill={isTarget ? "#8b5cf6" : "#94a3b8"} // Warna ungu untuk Forecast, abu-abu untuk sisanya
                     fontSize={10}
                     fontWeight={isTarget ? "900" : "bold"}
                 >
@@ -66,7 +83,6 @@ export default function Dashboard({ auth, summary, recentLogs, chartData, produc
                 </div>
 
                 <div className="flex items-center gap-3">
-                    {/* DROPDOWN SELECTOR */}
                     <div className="relative group">
                         <Box className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={14} />
                         <select 
@@ -99,64 +115,48 @@ export default function Dashboard({ auth, summary, recentLogs, chartData, produc
 
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 xl:gap-8">
                 <div className="xl:col-span-2 space-y-5">
-                    
-                    {/* AI Briefing with Dynamic Sync State */}
                     <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-0.5 rounded-2xl xl:rounded-3xl shadow-lg shadow-blue-500/10">
-                        <div className="bg-white dark:bg-slate-900 rounded-[0.9rem] xl:rounded-[1.4rem] p-4 xl:p-4 flex flex-col md:flex-row items-center gap-4">
-                            <div className="flex items-center w-full md:w-auto gap-3">
-                                <div className="w-12 h-12 xl:w-12 xl:h-12 bg-blue-50 dark:bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-600 shrink-0">
+                        <div className="bg-white dark:bg-slate-900 rounded-[0.9rem] xl:rounded-[1.4rem] p-4 md:p-5 flex flex-col md:flex-row items-center gap-4 md:gap-5">
+                            <div className="flex items-center w-full md:w-auto gap-4">
+                                <div className="w-12 h-12 bg-blue-50 dark:bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-600 shrink-0 shadow-inner">
                                     {isSyncing ? <Loader2 size={24} className="animate-spin" /> : <BrainCircuit size={24} />}
                                 </div>
                                 <div className="md:hidden">
-                                    <h3 className="text-sm font-bold text-slate-800 dark:text-white uppercase">AI Analysis</h3>
+                                    <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-tighter">Neural Analysis</h3>
                                 </div>
                             </div>
                             
                             <div className="flex-1 text-left">
-                                <h3 className="hidden md:block text-sm font-bold text-slate-800 dark:text-white uppercase tracking-tight mb-0.5">AI Stock Analysis</h3>
-                                <p className="text-xs xl:text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed italic">
-                                    {isSyncing ? "Neural Engine is processing latest movements..." : (aiBriefing || "Neural link active. Data synchronized.")}
-                                </p>
+                                <h3 className="hidden md:block text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-[0.2em] mb-1">AI Insights Engine</h3>
+                                <div className="text-xs md:text-sm lg:text-base text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                                    {isSyncing ? (
+                                        <span className="animate-pulse">Neural link established. crunching transaction history...</span>
+                                    ) : (
+                                        formatAiBriefing(aiBriefing) || "Ready to analyze. Select a product to begin neural mapping."
+                                    )}
+                                </div>
                             </div>
                             
-                            <button 
-                                onClick={handleResync}
-                                disabled={isSyncing}
-                                className="w-full md:w-auto px-4 py-2.5 bg-slate-900 dark:bg-white dark:text-slate-900 text-white rounded-lg font-bold text-xs xl:text-[9px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shrink-0 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                            >
-                                {isSyncing ? <Loader2 size={12} className="animate-spin" /> : null}
-                                {isSyncing ? "Syncing..." : "Re-Sync"}
+                            <button onClick={handleResync} disabled={isSyncing} className="w-full md:w-auto px-5 py-2.5 bg-slate-900 dark:bg-white dark:text-slate-900 text-white rounded-xl font-bold text-[10px] uppercase tracking-[0.15em] hover:scale-105 active:scale-95 transition-all shadow-lg disabled:opacity-50 flex items-center justify-center gap-2">
+                                {isSyncing ? <Loader2 size={12} className="animate-spin" /> : <Zap size={12} fill="currentColor" />}
+                                {isSyncing ? "Crunching..." : "Re-Sync"}
                             </button>
                         </div>
                     </div>
 
-                    {/* Stock Forecasting Card */}
                     <div className="bg-white dark:bg-slate-900 p-5 xl:p-6 rounded-2xl xl:rounded-[2rem] shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 overflow-hidden">
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 xl:mb-8">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-blue-600/10 rounded-xl">
-                                    <Sparkles className="text-blue-600" size={20} />
-                                </div>
+                                <div className="p-2 bg-blue-600/10 rounded-xl"><Sparkles className="text-blue-600" size={20} /></div>
                                 <div>
                                     <h2 className="text-lg xl:text-lg font-bold text-slate-800 dark:text-white uppercase tracking-tight">Stock Forecasting</h2>
                                     <p className="text-xs xl:text-[11px] text-slate-400 font-medium tracking-wide italic">Neural-Network Inventory Projection</p>
                                 </div>
                             </div>
-
-                            {/* Legend */}
                             <div className="flex flex-wrap gap-x-4 gap-y-2 px-1">
-                                <div className="flex items-center gap-1.5">
-                                    <div className="w-3 h-1 bg-blue-500 rounded-full"></div>
-                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Current Stock</span>
-                                </div>
-                                <div className="flex items-center gap-1.5">
-                                    <div className="w-3 h-1 bg-rose-500 border-t border-dashed border-rose-500"></div>
-                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Safety Threshold</span>
-                                </div>
-                                <div className="flex items-center gap-1.5">
-                                    <div className="w-3 h-1 bg-purple-500 border-t border-dashed border-purple-500"></div>
-                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">AI Restock Goal</span>
-                                </div>
+                                <div className="flex items-center gap-1.5"><div className="w-3 h-1 bg-blue-500 rounded-full"></div><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Current Stock</span></div>
+                                <div className="flex items-center gap-1.5"><div className="w-3 h-1 bg-rose-500 border-t border-dashed border-rose-500"></div><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Safety Threshold</span></div>
+                                <div className="flex items-center gap-1.5"><div className="w-3 h-1 bg-purple-500 border-t border-dashed border-purple-500"></div><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">AI Restock Goal</span></div>
                             </div>
                         </div>
 
@@ -171,40 +171,11 @@ export default function Dashboard({ auth, summary, recentLogs, chartData, produc
                                             </linearGradient>
                                         </defs>
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" opacity={0.3} />
-                                        <XAxis 
-                                            dataKey="date" 
-                                            axisLine={false} 
-                                            tickLine={false} 
-                                            tick={<CustomXAxisTick />} 
-                                            dy={10} 
-                                        />
+                                        <XAxis dataKey="date" axisLine={false} tickLine={false} tick={<CustomXAxisTick />} dy={10} />
                                         <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 10, fontWeight: 'bold'}} />
-                                        
-                                        <ReferenceLine 
-                                            y={summary.min_threshold || 15} 
-                                            stroke="#f43f5e" 
-                                            strokeDasharray="4 4"
-                                            strokeWidth={2}
-                                            label={{ value: 'LIMIT', fill: '#f43f5e', fontSize: 9, fontWeight: '900', position: 'right', dx: -10 }} 
-                                        />
-                                        
-                                        <ReferenceLine 
-                                            x={chartData[chartData.length - 1]?.date} 
-                                            stroke="#8b5cf6" 
-                                            strokeWidth={2}
-                                            strokeDasharray="4 4"
-                                            label={{ value: 'RESTOCK POINT', fill: '#8b5cf6', fontSize: 9, fontWeight: '900', position: 'top' }} 
-                                        />
-
-                                        <Tooltip 
-                                            formatter={(value, name) => [value, name === 'actual' ? 'Live Inventory' : 'AI Predicted']}
-                                            contentStyle={{ 
-                                                borderRadius: '15px', border: 'none', 
-                                                boxShadow: '0 20px 40px -10px rgb(0 0 0 / 0.5)',
-                                                backgroundColor: '#0f172a', color: '#fff',
-                                                fontSize: '12px'
-                                            }}
-                                        />
+                                        <ReferenceLine y={summary.min_threshold || 15} stroke="#f43f5e" strokeDasharray="4 4" strokeWidth={2} label={{ value: 'LIMIT', fill: '#f43f5e', fontSize: 9, fontWeight: '900', position: 'right', dx: -10 }} />
+                                        <ReferenceLine x={chartData[chartData.length - 1]?.date} stroke="#8b5cf6" strokeWidth={2} strokeDasharray="4 4" label={{ value: 'RESTOCK POINT', fill: '#8b5cf6', fontSize: 9, fontWeight: '900', position: 'top' }} />
+                                        <Tooltip formatter={(value, name) => [value, name === 'actual' ? 'Live Inventory' : 'AI Predicted']} contentStyle={{ borderRadius: '15px', border: 'none', boxShadow: '0 20px 40px -10px rgb(0 0 0 / 0.5)', backgroundColor: '#0f172a', color: '#fff', fontSize: '12px' }} />
                                         <Area type="monotone" dataKey="actual" stroke="#3b82f6" strokeWidth={3} fill="url(#colorActual)" connectNulls animationDuration={1500} />
                                         <Area type="monotone" dataKey="prediction" stroke="#8b5cf6" strokeWidth={3} strokeDasharray="8 8" fill="none" connectNulls animationDuration={2000} />
                                     </AreaChart>
@@ -214,41 +185,27 @@ export default function Dashboard({ auth, summary, recentLogs, chartData, produc
                     </div>
                 </div>
 
-                {/* Activity Feed */}
                 <div className="bg-white dark:bg-slate-900 p-6 xl:p-6 rounded-2xl xl:rounded-[2rem] shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 flex flex-col xl:h-full xl:max-h-[500px]">
                     <div className="flex items-center justify-between mb-5">
                         <h2 className="text-lg xl:text-lg font-bold dark:text-white uppercase tracking-tight">Recent Flow</h2>
-                        <span className="p-1.5 bg-slate-50 dark:bg-slate-800 rounded-lg text-slate-400">
-                            <Clock size={14} />
-                        </span>
+                        <span className="p-1.5 bg-slate-50 dark:bg-slate-800 rounded-lg text-slate-400"><Clock size={14} /></span>
                     </div>
                     <div className="flex-1 space-y-5 xl:space-y-4 overflow-y-auto no-scrollbar pr-1">
                         {recentLogs.map((log) => (
                             <div key={log.id} className="flex items-center gap-3 group">
-                                <div className={`w-11 h-11 xl:w-10 xl:h-10 rounded-xl flex items-center justify-center shrink-0 transition-all group-hover:rotate-12 ${
-                                    log.category === 'sale' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10' : 'bg-slate-50 text-slate-600 dark:bg-slate-800'
-                                }`}>
-                                    <Box size={18} />
-                                </div>
+                                <div className={`w-11 h-11 xl:w-10 xl:h-10 rounded-xl flex items-center justify-center shrink-0 transition-all group-hover:rotate-12 ${log.category === 'sale' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10' : 'bg-slate-50 text-slate-600 dark:bg-slate-800'}`}><Box size={18} /></div>
                                 <div className="flex-1 min-w-0">
                                     <p className="font-bold text-sm xl:text-sm text-slate-800 dark:text-slate-200 truncate group-hover:text-blue-600 transition-colors">{log.product.name}</p>
                                     <p className="text-[10px] xl:text-[9px] text-slate-400 font-black uppercase tracking-widest">{log.category}</p>
                                 </div>
                                 <div className="text-right">
-                                    <p className={`font-black text-sm ${log.type === 'IN' ? 'text-emerald-500' : 'text-slate-700 dark:text-slate-300'}`}>
-                                        {log.type === 'IN' ? '+' : '-'}{log.quantity}
-                                    </p>
+                                    <p className={`font-black text-sm ${log.type === 'IN' ? 'text-emerald-500' : 'text-slate-700 dark:text-slate-300'}`}>{log.type === 'IN' ? '+' : '-'}{log.quantity}</p>
                                     <p className="text-[10px] xl:text-[9px] text-slate-400 font-bold">{new Date(log.created_at).toLocaleDateString('en-GB')}</p>
                                 </div>
                             </div>
                         ))}
                     </div>
-                    <Link 
-                        href="/reports" 
-                        className="w-full mt-6 py-4 bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-black text-xs xl:text-[10px] uppercase tracking-widest rounded-xl hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center gap-2"
-                    >
-                        View All <ChevronRight size={14} />
-                    </Link>
+                    <Link href="/reports" className="w-full mt-6 py-4 bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-black text-xs xl:text-[10px] uppercase tracking-widest rounded-xl hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center gap-2">View All <ChevronRight size={14} /></Link>
                 </div>
             </div>
             
@@ -267,12 +224,9 @@ function StatCard({ title, value, icon: Icon, color, subtitle }) {
         amber: 'text-amber-600 bg-amber-50 dark:bg-amber-500/10 shadow-amber-500/10',
         indigo: 'text-indigo-600 bg-indigo-50 dark:bg-indigo-500/10 shadow-indigo-500/10',
     };
-    
     return (
         <div className="bg-white dark:bg-slate-900 p-5 xl:p-5 rounded-3xl xl:rounded-[1.5rem] border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/40 dark:shadow-none transition-all duration-300 hover:-translate-y-1 group">
-            <div className={`w-11 h-11 xl:w-11 xl:h-11 rounded-xl flex items-center justify-center mb-4 xl:mb-3 transition-transform group-hover:scale-110 shadow-md ${colorClasses[color]}`}>
-                <Icon size={22} className="xl:w-6 xl:h-6" />
-            </div>
+            <div className={`w-11 h-11 xl:w-11 xl:h-11 rounded-xl flex items-center justify-center mb-4 xl:mb-3 transition-transform group-hover:scale-110 shadow-md ${colorClasses[color]}`}><Icon size={22} className="xl:w-6 xl:h-6" /></div>
             <h3 className="text-[10px] xl:text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-1 xl:mb-0.5 truncate">{title}</h3>
             <div className="flex items-baseline gap-2">
                 <p className="text-2xl xl:text-3xl font-black text-slate-900 dark:text-white tracking-tight">{value}</p>
